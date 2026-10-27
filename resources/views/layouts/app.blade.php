@@ -8,7 +8,14 @@
 </head>
 <body>
     <header class="navbar">
-        <a href="{{ route('home') }}" class="brand">Karhutla</a>
+        <div class="nav-left">
+            <a href="{{ route('home') }}" class="brand">Karhutla</a>
+
+            @auth
+                <a href="{{ route('reports.index') }}" class="nav-link">Laporan Saya</a>
+                <a href="{{ route('reports.create') }}" class="nav-link">Buat Laporan</a>
+            @endauth
+        </div>
 
         @auth
             <div class="nav-right">
@@ -22,6 +29,10 @@
     </header>
 
     <main class="container">
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
         @yield('content')
     </main>
 </body>
