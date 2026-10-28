@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Laporan Saya')
+@section('title', auth()->user()->isPelapor() ? 'Laporan Saya' : 'Semua Laporan')
 
 @section('content')
     <div class="card">
-        <h1>Laporan Saya</h1>
+        <h1>{{ auth()->user()->isPelapor() ? 'Laporan Saya' : 'Semua Laporan' }}</h1>
 
         @if ($reports->isEmpty())
             <p>Belum ada laporan.</p>
@@ -14,10 +14,13 @@
                     <tr>
                         <th>Waktu kejadian</th>
                         <th>Judul</th>
+                        @unless (auth()->user()->isPelapor())
+                            <th>Pelapor</th>
+                        @endunless
                         <th>Area</th>
                         <th>Tingkat</th>
                         <th>Status</th>
-                        <th>Bukti</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,16 +28,13 @@
                         <tr>
                             <td>{{ $report->waktu_kejadian->format('d M Y H:i') }}</td>
                             <td>{{ $report->judul }}</td>
+                            @unless (auth()->user()->isPelapor())
+                                <td>{{ $report->pelapor->name }}</td>
+                            @endunless
                             <td>{{ $report->area->nama }}</td>
                             <td>{{ $report->tingkat }}</td>
                             <td><span class="badge">{{ $report->status }}</span></td>
-                            <td>
-                                @if ($report->evidence_path)
-                                    <a href="{{ route('reports.evidence', $report) }}" target="_blank">Lihat</a>
-                                @else
-                                    -
-                                @endif
-                            </td>
+                            <td><a href="{{ route('reports.show', $report) }}">Detail</a></td>
                         </tr>
                     @endforeach
                 </tbody>

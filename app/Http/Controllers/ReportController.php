@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Area;
 use App\Models\Report;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class ReportController extends Controller
 {
     public function index(Request $request)
     {
-        $reports = Report::with('area')
-            ->where('user_id', $request->user()->id)
+        $reports = Report::with(['area', 'pelapor'])
+            ->visibleTo($request->user())
             ->latest('waktu_kejadian')
             ->get();
 
@@ -74,9 +75,18 @@ class ReportController extends Controller
             ->with('success', 'Laporan berhasil dikirim');
     }
 
-    public function evidence(Request $request, Report $report)
+    public function show(Report $report)
     {
-        abort_if($report->user_id !== $request->user()->id, 403);
+        Gate::authorize('view', $report);
+
+        $report->load(['area', 'pelapor', 'reviewer']);
+
+        return view('reports.show', compact('report'));
+    }
+
+    public function evidence(Report $report)
+    {
+        Gate::authorize('view', $report);
 
         abort_if(
             ! $report->evidence_path || ! Storage::disk('local')->exists($report->evidence_path),

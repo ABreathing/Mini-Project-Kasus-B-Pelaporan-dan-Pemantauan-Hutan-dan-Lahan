@@ -12,7 +12,9 @@
             <a href="{{ route('home') }}" class="brand">Karhutla</a>
 
             @auth
-                <a href="{{ route('reports.index') }}" class="nav-link">Laporan Saya</a>
+                <a href="{{ route('reports.index') }}" class="nav-link">
+                    {{ auth()->user()->isPelapor() ? 'Laporan Saya' : 'Semua Laporan' }}
+                </a>
                 <a href="{{ route('reports.create') }}" class="nav-link">Buat Laporan</a>
             @endauth
         </div>
