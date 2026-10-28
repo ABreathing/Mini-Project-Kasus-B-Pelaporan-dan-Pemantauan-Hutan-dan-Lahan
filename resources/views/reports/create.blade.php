@@ -6,7 +6,7 @@
     <div class="card">
         <h1>Buat Laporan</h1>
 
-        <form action="{{ route('reports.store') }}" method="POST">
+        <form action="{{ route('reports.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <label for="judul">Judul</label>
@@ -60,6 +60,12 @@
             <label for="waktu_kejadian">Waktu kejadian</label>
             <input type="datetime-local" id="waktu_kejadian" name="waktu_kejadian" value="{{ old('waktu_kejadian') }}" required>
             @error('waktu_kejadian')
+                <p class="error">{{ $message }}</p>
+            @enderror
+
+            <label for="evidence">Bukti pendukung (opsional, JPG/PNG/PDF, maks 2 MB)</label>
+            <input type="file" id="evidence" name="evidence">
+            @error('evidence')
                 <p class="error">{{ $message }}</p>
             @enderror
 

@@ -17,6 +17,7 @@
                         <th>Area</th>
                         <th>Tingkat</th>
                         <th>Status</th>
+                        <th>Bukti</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,6 +28,13 @@
                             <td>{{ $report->area->nama }}</td>
                             <td>{{ $report->tingkat }}</td>
                             <td><span class="badge">{{ $report->status }}</span></td>
+                            <td>
+                                @if ($report->evidence_path)
+                                    <a href="{{ route('reports.evidence', $report) }}" target="_blank">Lihat</a>
+                                @else
+                                    -
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
