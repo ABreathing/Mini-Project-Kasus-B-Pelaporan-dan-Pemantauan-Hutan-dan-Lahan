@@ -13,4 +13,9 @@ class ReportPolicy
             || $user->isRelawan()
             || $user->isKoordinator();
     }
+
+    public function review(User $user, Report $report): bool
+    {
+        return $user->isRelawan() || $user->isKoordinator();
+    }
 }

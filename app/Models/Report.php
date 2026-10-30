@@ -23,6 +23,13 @@ class Report extends Model
         'reviewed_by',
     ];
 
+    public const TRANSITIONS = [
+        'relawan' => [
+            'dikirim' => ['ditinjau'],
+            'ditinjau' => ['perlu_diteruskan', 'selesai'],
+        ],
+    ];
+
     protected function casts(): array
     {
         return [
@@ -37,6 +44,11 @@ class Report extends Model
         }
 
         return $query->where('user_id', $user->id);
+    }
+
+    public function nextStatusesFor(User $user): array
+    {
+        return self::TRANSITIONS[$user->role][$this->status] ?? [];
     }
 
     public function pelapor(): BelongsTo

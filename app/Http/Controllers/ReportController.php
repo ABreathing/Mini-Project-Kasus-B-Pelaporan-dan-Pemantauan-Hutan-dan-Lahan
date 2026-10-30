@@ -75,13 +75,54 @@ class ReportController extends Controller
             ->with('success', 'Laporan berhasil dikirim');
     }
 
-    public function show(Report $report)
+    public function show(Request $request, Report $report)
     {
         Gate::authorize('view', $report);
 
+        $user = $request->user();
         $report->load(['area', 'pelapor', 'reviewer']);
 
-        return view('reports.show', compact('report'));
+        $nextStatuses = $report->nextStatusesFor($user);
+
+        $related = collect();
+        if ($user->isRelawan() || $user->isKoordinator()) {
+            $related = Report::where('area_id', $report->area_id)
+                ->where('id', '!=', $report->id)
+                ->latest('waktu_kejadian')
+                ->get();
+        }
+
+        return view('reports.show', compact('report', 'nextStatuses', 'related'));
+    }
+
+    public function updateStatus(Request $request, Report $report)
+    {
+        Gate::authorize('review', $report);
+
+        $data = $request->validate([
+            'status' => 'required|in:ditinjau,perlu_diteruskan,diteruskan,selesai',
+            'catatan' => 'required|string|max:500',
+        ], [
+            'status.required' => 'Status wajib dipilih',
+            'status.in' => 'Status tidak valid',
+            'catatan.required' => 'Catatan wajib diisi',
+            'catatan.max' => 'Catatan maksimal 500 karakter',
+        ]);
+
+        if (! in_array($data['status'], $report->nextStatusesFor($request->user()))) {
+            return back()->withErrors([
+                'status' => 'Perubahan status dari ' . $report->status . ' ke ' . $data['status'] . ' tidak diperbolehkan',
+            ]);
+        }
+
+        $report->update([
+            'status' => $data['status'],
+            'catatan_relawan' => $data['catatan'],
+            'reviewed_by' => $request->user()->id,
+        ]);
+
+        return redirect()->route('reports.show', $report)
+            ->with('success', 'Status laporan diperbarui');
     }
 
     public function evidence(Report $report)

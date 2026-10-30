@@ -83,3 +83,12 @@ input {
     color: #b91c1c;
     font-size: 14px;
 }
+
+.section {
+    margin-top: 16px;
+}
+
+.note {
+    font-size: 14px;
+    color: #555;
+}
