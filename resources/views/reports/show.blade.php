@@ -150,6 +150,35 @@
         </div>
     @endif
 
+    <div class="card section">
+        <h2>Riwayat Status</h2>
+
+        @if ($report->statusLogs->isEmpty())
+            <p>Belum ada perubahan status.</p>
+        @else
+            <table>
+                <thead>
+                    <tr>
+                        <th>Waktu</th>
+                        <th>Dari</th>
+                        <th>Menjadi</th>
+                        <th>Oleh</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($report->statusLogs as $log)
+                        <tr>
+                            <td>{{ $log->created_at->format('d M Y H:i') }}</td>
+                            <td>{{ $log->status_lama ?? '-' }}</td>
+                            <td><span class="badge">{{ $log->status_baru }}</span></td>
+                            <td>{{ $log->pengubah?->name ?? '-' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </div>
+
     @if (auth()->user()->isRelawan() || auth()->user()->isKoordinator())
         <div class="card section">
             <h2>Laporan lain di area {{ $report->area->nama }}</h2>

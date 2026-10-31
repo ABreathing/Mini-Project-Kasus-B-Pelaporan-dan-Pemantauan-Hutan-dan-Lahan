@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Report extends Model
 {
@@ -91,5 +92,10 @@ class Report extends Model
     public function forwarding(): HasOne
     {
         return $this->hasOne(ReportForwarding::class);
+    }
+    
+    public function statusLogs(): HasMany
+    {
+        return $this->hasMany(ReportStatusLog::class);
     }
 }

@@ -80,8 +80,7 @@ class ReportController extends Controller
         Gate::authorize('view', $report);
 
         $user = $request->user();
-        $report->load(['area', 'pelapor', 'reviewer', 'forwarding.koordinator']);
-
+        $report->load(['area', 'pelapor', 'reviewer', 'forwarding.koordinator', 'statusLogs.pengubah']);
         $nextStatuses = $report->nextStatusesFor($user);
 
         $related = collect();
