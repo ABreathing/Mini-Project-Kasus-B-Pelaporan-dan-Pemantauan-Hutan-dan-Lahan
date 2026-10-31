@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Report extends Model
 {
+    public const STATUSES = ['dikirim', 'ditinjau', 'perlu_diteruskan', 'diteruskan', 'selesai'];
+
     public const MAX_DIKIRIM = 3;
 
     public const TRANSITIONS = [
@@ -43,13 +45,27 @@ class Report extends Model
         ];
     }
 
-    public function scopeVisibleTo(Builder $query, User $user): Builder
+   public function scopeVisibleTo(Builder $query, User $user): Builder
     {
         if ($user->isRelawan() || $user->isKoordinator()) {
             return $query;
         }
 
         return $query->where('user_id', $user->id);
+    }
+
+    public function scopeFilter(Builder $query, array $filters): Builder
+    {
+        return $query
+            ->when($filters['q'] ?? null, function ($q, $kata) {
+                $q->where(function ($q) use ($kata) {
+                    $q->where('judul', 'like', '%' . $kata . '%')
+                        ->orWhere('kondisi', 'like', '%' . $kata . '%');
+                });
+            })
+            ->when($filters['area_id'] ?? null, fn ($q, $nilai) => $q->where('area_id', $nilai))
+            ->when($filters['status'] ?? null, fn ($q, $nilai) => $q->where('status', $nilai))
+            ->when($filters['tingkat'] ?? null, fn ($q, $nilai) => $q->where('tingkat', $nilai));
     }
 
     public function nextStatusesFor(User $user): array
@@ -72,7 +88,6 @@ class Report extends Model
         return $this->belongsTo(User::class, 'reviewed_by');
     }
 
-    // catatan penerusan oleh koordinator (paling banyak satu)
     public function forwarding(): HasOne
     {
         return $this->hasOne(ReportForwarding::class);

@@ -14,12 +14,19 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
+        $filters = $request->only(['q', 'area_id', 'status', 'tingkat']);
+
         $reports = Report::with(['area', 'pelapor'])
             ->visibleTo($request->user())
+            ->filter($filters)
             ->latest('waktu_kejadian')
-            ->get();
+            ->orderByDesc('id')
+            ->paginate(5)
+            ->withQueryString(); // supaya filter tetap aktif waktu pindah halaman
 
-        return view('reports.index', compact('reports'));
+        $areas = Area::orderBy('nama')->get();
+
+        return view('reports.index', compact('reports', 'areas', 'filters'));
     }
 
     public function create()
