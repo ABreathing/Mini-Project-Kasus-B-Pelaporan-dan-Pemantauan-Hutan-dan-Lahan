@@ -54,15 +54,43 @@
                     @endif
                 </td>
             </tr>
+            @if ($report->forwarding)
+                <tr>
+                    <th>Diteruskan ke</th>
+                    <td>
+                        {{ $report->forwarding->pihak_terkait }}
+                        @if ($report->forwarding->catatan)
+                            <br>{{ $report->forwarding->catatan }}
+                        @endif
+                        <br>
+                        <small>
+                            dicatat oleh {{ $report->forwarding->koordinator?->name ?? '-' }}
+                            pada {{ $report->forwarding->created_at->format('d M Y H:i') }}
+                        </small>
+                    </td>
+                </tr>
+            @endif
         </table>
 
-        <a href="{{ route('reports.index') }}" class="btn">Kembali</a>
+        <div class="aksi">
+            <a href="{{ route('reports.index') }}" class="btn btn-light">Kembali</a>
+
+            @if (auth()->id() === $report->user_id)
+                <a href="{{ route('reports.edit', $report) }}" class="btn">Edit</a>
+
+                <form action="{{ route('reports.destroy', $report) }}" method="POST" class="inline"
+                      onsubmit="return confirm('Hapus laporan ini?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </form>
+            @endif
+        </div>
     </div>
 
-    {{-- form peninjauan, hanya muncul kalau user boleh mengubah status laporan ini --}}
     @if (count($nextStatuses) > 0)
         <div class="card section">
-            <h2>Tinjau Laporan</h2>
+            <h2>{{ auth()->user()->isRelawan() ? 'Tinjau Laporan' : 'Selesaikan Laporan' }}</h2>
             <p class="note">
                 Peninjauan hanya menilai kelengkapan dan kewajaran informasi,
                 bukan menetapkan bahwa kebakaran benar-benar terjadi.
@@ -83,13 +111,41 @@
                     <p class="error">{{ $message }}</p>
                 @enderror
 
-                <label for="catatan">Catatan</label>
-                <textarea id="catatan" name="catatan" rows="3" required>{{ old('catatan') }}</textarea>
+                <label for="catatan">Catatan {{ auth()->user()->isRelawan() ? '' : '(opsional)' }}</label>
+                <textarea id="catatan" name="catatan" rows="3" @if (auth()->user()->isRelawan()) required @endif>{{ old('catatan') }}</textarea>
                 @error('catatan')
                     <p class="error">{{ $message }}</p>
                 @enderror
 
                 <button type="submit" class="btn">Simpan</button>
+            </form>
+        </div>
+    @endif
+
+    @if (auth()->user()->isKoordinator() && $report->status === 'perlu_diteruskan')
+        <div class="card section">
+            <h2>Catat Penerusan ke Pihak Terkait</h2>
+            <p class="note">
+                Isi setelah informasi ini benar-benar kamu sampaikan ke pihak terkait
+                (misalnya BPBD, Manggala Agni, atau Damkar). Status akan berubah menjadi "diteruskan".
+            </p>
+
+            <form action="{{ route('reports.forward', $report) }}" method="POST">
+                @csrf
+
+                <label for="pihak_terkait">Pihak terkait</label>
+                <input type="text" id="pihak_terkait" name="pihak_terkait" value="{{ old('pihak_terkait') }}" required>
+                @error('pihak_terkait')
+                    <p class="error">{{ $message }}</p>
+                @enderror
+
+                <label for="catatan_penerusan">Catatan (opsional)</label>
+                <textarea id="catatan_penerusan" name="catatan" rows="3">{{ old('catatan') }}</textarea>
+                @error('catatan')
+                    <p class="error">{{ $message }}</p>
+                @enderror
+
+                <button type="submit" class="btn">Catat Penerusan</button>
             </form>
         </div>
     @endif

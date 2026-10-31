@@ -20,10 +20,15 @@ Route::middleware('auth')->group(function () {
         return view('home');
     })->name('home');
 
+    // laporan
     Route::get('/laporan', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/laporan/buat', [ReportController::class, 'create'])->name('reports.create');
     Route::post('/laporan', [ReportController::class, 'store'])->name('reports.store');
     Route::get('/laporan/{report}', [ReportController::class, 'show'])->whereNumber('report')->name('reports.show');
+    Route::get('/laporan/{report}/edit', [ReportController::class, 'edit'])->whereNumber('report')->name('reports.edit');
+    Route::put('/laporan/{report}', [ReportController::class, 'update'])->whereNumber('report')->name('reports.update');
+    Route::delete('/laporan/{report}', [ReportController::class, 'destroy'])->whereNumber('report')->name('reports.destroy');
     Route::patch('/laporan/{report}/status', [ReportController::class, 'updateStatus'])->whereNumber('report')->name('reports.status');
+    Route::post('/laporan/{report}/teruskan', [ReportController::class, 'forward'])->whereNumber('report')->name('reports.forward');
     Route::get('/laporan/{report}/bukti', [ReportController::class, 'evidence'])->whereNumber('report')->name('reports.evidence');
 });

@@ -5,9 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Report extends Model
 {
+    public const MAX_DIKIRIM = 3;
+
+    public const TRANSITIONS = [
+        'relawan' => [
+            'dikirim' => ['ditinjau'],
+            'ditinjau' => ['perlu_diteruskan', 'selesai'],
+        ],
+        'koordinator' => [
+            'diteruskan' => ['selesai'],
+        ],
+    ];
+
     protected $fillable = [
         'user_id',
         'area_id',
@@ -21,13 +34,6 @@ class Report extends Model
         'status',
         'catatan_relawan',
         'reviewed_by',
-    ];
-
-    public const TRANSITIONS = [
-        'relawan' => [
-            'dikirim' => ['ditinjau'],
-            'ditinjau' => ['perlu_diteruskan', 'selesai'],
-        ],
     ];
 
     protected function casts(): array
@@ -64,5 +70,11 @@ class Report extends Model
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    // catatan penerusan oleh koordinator (paling banyak satu)
+    public function forwarding(): HasOne
+    {
+        return $this->hasOne(ReportForwarding::class);
     }
 }

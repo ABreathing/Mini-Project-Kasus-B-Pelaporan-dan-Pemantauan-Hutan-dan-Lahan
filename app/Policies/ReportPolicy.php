@@ -14,8 +14,23 @@ class ReportPolicy
             || $user->isKoordinator();
     }
 
+    public function update(User $user, Report $report): bool
+    {
+        return $user->id === $report->user_id;
+    }
+
+    public function delete(User $user, Report $report): bool
+    {
+        return $user->id === $report->user_id;
+    }
+
     public function review(User $user, Report $report): bool
     {
         return $user->isRelawan() || $user->isKoordinator();
+    }
+
+    public function forward(User $user, Report $report): bool
+    {
+        return $user->isKoordinator();
     }
 }
