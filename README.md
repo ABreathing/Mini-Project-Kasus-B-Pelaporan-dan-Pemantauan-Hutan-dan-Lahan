@@ -1,58 +1,94 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Karhutla
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+aplikasi web komunitas buat lapor dan pantau indikasi kebakaran hutan dan lahan ini mini project proyek 3 kasus b dibuat pake laravel mysql blade css dan javascript
 
-## About Laravel
+## identitas
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Anand Fairuzza Islami Permana
+- 251511002
+- D3-2A
+- judul mini project pelaporan dan pemantauan kebakaran hutan dan lahan kasus B
+- repository https://github.com/ABreathing/Mini-Project-Kasus-B-Pelaporan-dan-Pemantauan-Hutan-dan-Lahan.git
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## apa aja yang bisa dilakuin
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+ada tiga jenis pengguna pelapor relawan pemantau dan koordinator relawan
 
-## Learning Laravel
+pelapor bisa bikin laporan lengkap sama lokasi koordinat dan satu file bukti lalu mantau perkembangan laporannya sendiri dan boleh ngubah laporannya selama masih berstatus dikirim
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+relawan bisa nampilin semua laporan nilai kelengkapan dan kewajarannya liat laporan lain di area yang sama ngasih catatan lalu nandain laporan ditinjau perlu diteruskan atau selesai
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+koordinator bisa liat semua laporan lihat rekap nyatet laporan yang udah diteruskan ke pihak terkait dan nyelesain laporannya
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+alur status laporan dikirim lalu ditinjau lalu perlu_diteruskan lalu diteruskan lalu selesai atau dari ditinjau bisa langsung selesai
 
-## Agentic Development
+## business rule
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- br-01 laporan cuma bisa diedit atau dihapus pemiliknya selama masih dikirim
+- br-02 relawan gak boleh nilai laporan miliknya sendiri
+- br-03 penerusan ke pihak terkait cuma bisa dicatat kalau statusnya perlu_diteruskan
+- br-04 satu pengguna maksimal punya 3 laporan berstatus dikirim
 
-```bash
-composer require laravel/boost --dev
+## kebutuhan environment
 
-php artisan boost:install
+- php 8.4 atau lebih baru
+- composer
+- mysql atau mariadb bisa pake xampp
+- git
+
+gak perlu node atau npm karena tampilan pake css biasa
+
+## langkah instalasi
+
+```
+git clone https://github.com/ABreathing/Mini-Project-Kasus-B-Pelaporan-dan-Pemantauan-Hutan-dan-Lahan.git
+cd Mini-Project-Kasus-B-Pelaporan-dan-Pemantauan-Hutan-dan-Lahan
+composer install
+copy .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+kalau pake linux atau mac ganti copy jadi cp
 
-## Contributing
+## konfigurasi database
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+nyalain mysql dulu lewat xampp lalu buka phpmyadmin dan bikin database kosong bernama karhutla dengan collation utf8mb4_unicode_ci
 
-## Code of Conduct
+di file .env isinya udah cocok buat xampp default yaitu user root tanpa password kalau punya kamu beda ubah DB_USERNAME dan DB_PASSWORD
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## migration dan seeding
 
-## Security Vulnerabilities
+```
+php artisan migrate --seed
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+kalau mau ngulang dari awal dengan data bersih pake
 
-## License
+```
+php artisan migrate:fresh --seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## akun demo
+
+semua password nya password
+
+| role | email | catatan |
+|---|---|---|
+| pelapor | roman@karhutla.test | punya 1 laporan dikirim |
+| pelapor | talia@karhutla.test | punya 3 laporan dikirim jadi kena br-04 kalau bikin laporan baru |
+| relawan pemantau | weakkingsley@karhutla.test | punya laporan sendiri laporan nomor 11 buat ngetes br-02 |
+| koordinator relawan | d@karhutla.test | bisa lihat rekap dan catat penerusan |
+
+data seed isinya 19 laporan di 5 area dengan berbagai status dan semuanya data dummy
+
+## cara menjalankan
+
+```
+php artisan serve
+```
+
+lalu buka http://127.0.0.1:8000 dan login pake salah satu akun demo
+
+## catatan
+
+file bukti disimpan privat di storage/app/private/evidence jadi gak perlu storage link dan cuma bisa dibuka lewat aplikasi oleh yang berhak
