@@ -16,6 +16,9 @@
                     {{ auth()->user()->isPelapor() ? 'Laporan Saya' : 'Semua Laporan' }}
                 </a>
                 <a href="{{ route('reports.create') }}" class="nav-link">Buat Laporan</a>
+                                @if (auth()->user()->isRelawan() || auth()->user()->isKoordinator())
+                    <a href="{{ route('rekap') }}" class="nav-link">Rekap</a>
+                @endif
             @endauth
         </div>
 

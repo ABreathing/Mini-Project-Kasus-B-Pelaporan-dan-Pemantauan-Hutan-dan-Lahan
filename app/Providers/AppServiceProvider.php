@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Report;
+use App\Models\User;
 use App\Observers\ReportObserver;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -14,7 +16,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Observer: catat perubahan status laporan
         Report::observe(ReportObserver::class);
+
+        Gate::define('view-rekap', function (User $user) {
+            return $user->isRelawan() || $user->isKoordinator();
+        });
     }
 }
