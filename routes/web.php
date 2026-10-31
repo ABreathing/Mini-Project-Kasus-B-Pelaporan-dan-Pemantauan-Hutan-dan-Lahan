@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AreaController;
 
 Route::get('/', function () {
     return redirect()->route('home');
@@ -31,4 +32,5 @@ Route::middleware('auth')->group(function () {
     Route::patch('/laporan/{report}/status', [ReportController::class, 'updateStatus'])->whereNumber('report')->name('reports.status');
     Route::post('/laporan/{report}/teruskan', [ReportController::class, 'forward'])->whereNumber('report')->name('reports.forward');
     Route::get('/laporan/{report}/bukti', [ReportController::class, 'evidence'])->whereNumber('report')->name('reports.evidence');
+    Route::get('/areas/{area}/ringkasan', [AreaController::class, 'ringkasan'])->whereNumber('area')->name('areas.ringkasan');
 });

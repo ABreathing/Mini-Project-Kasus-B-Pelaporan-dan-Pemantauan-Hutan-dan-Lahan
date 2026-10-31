@@ -1,4 +1,3 @@
-{{-- field laporan yang dipakai di form buat dan form edit --}}
 @php($r = $report ?? null)
 
 <label for="judul">Judul</label>
@@ -19,6 +18,7 @@
 @error('area_id')
     <p class="error">{{ $message }}</p>
 @enderror
+<div id="info-area" class="info-area"></div>
 
 <label for="tingkat">Tingkat kondisi</label>
 <select id="tingkat" name="tingkat" required>
